@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/testUnzip.dir/src/unzip/testUnzip.cpp.o CMakeFiles/testUnzip.dir/src/unzip/ioapi.c.o CMakeFiles/testUnzip.dir/src/unzip/unzip.c.o  -o testUnzip  -L/home/jiang/workspace/mycode/lib/hisi -Wl,-rpath,/home/jiang/workspace/mycode/lib/hisi -lz 

@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../src/include/zip.h
+zipconf.h
+-
+stdio.h
+-
+sys/types.h
+-
+time.h
+-
+
+../src/include/zipconf.h
+inttypes.h
+-
+
+/home/jiang/workspace/mycode/src/testUnzip.cpp
+zip.h
+-
+
