@@ -1,3 +1,0 @@
-/home/jiang/workspace/mycode/build/CMakeFiles/rebuild_cache.dir
-/home/jiang/workspace/mycode/build/CMakeFiles/testUnzip.dir
-/home/jiang/workspace/mycode/build/CMakeFiles/edit_cache.dir
