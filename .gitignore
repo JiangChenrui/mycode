@@ -1,4 +1,7 @@
-.vscode
-.build
-.cmake-build-debug
+build/
+.vscode/
+.history/
+cmake-build-debug/
 .idea
+*.zip
+*.tar.gz
