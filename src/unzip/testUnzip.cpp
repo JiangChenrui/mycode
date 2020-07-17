@@ -55,9 +55,10 @@ int makedir(const char* newdir) {
     return 1;
 }
 
-int getUnzipFile(unzFile uf) {
+int getUnzipFile(unzFile uf, const char *unZipDir) {
     const char* password = NULL;
     char filename_inzip[256];
+    char filename_temp[256];
     char* filename_withoutpath;
     char* p;
     int err = UNZ_OK;
@@ -67,9 +68,11 @@ int getUnzipFile(unzFile uf) {
 
     unz_file_info64 file_info;
     uLong ratio = 0;
-    err = unzGetCurrentFileInfo64(uf, &file_info, filename_inzip,
-                                  sizeof(filename_inzip), NULL, 0, NULL, 0);
+    err = unzGetCurrentFileInfo64(uf, &file_info, filename_temp,
+                                  sizeof(filename_temp), NULL, 0, NULL, 0);
 
+    sprintf(filename_inzip, "%s/%s", unZipDir, filename_temp);
+    printf("filename_inzip is %s\n", filename_inzip);
     if (err != UNZ_OK) {
         printf("error %d with zipfile in unzGetCurrentFileInfo\n", err);
         return err;
@@ -84,13 +87,14 @@ int getUnzipFile(unzFile uf) {
 
     p = filename_withoutpath = filename_inzip;
     while ((*p) != '\0') {
-        if (((*p) == '/') || ((*p) == '\\')) filename_withoutpath = p + 1;
+        if (((*p) == '/') || ((*p) == '\\')) 
+            filename_withoutpath = p + 1;
         p++;
     }
 
     if ((*filename_withoutpath) == '\0') {
         printf("创建文件夹: %s\n", filename_inzip);
-        mkdir(filename_inzip, 0775);        
+        mkdir(filename_inzip, 0775);
     } else {
         const char* write_filename;
 
@@ -118,7 +122,7 @@ int getUnzipFile(unzFile uf) {
         }
 
         if (fout != NULL) {
-            printf(" extracting: %s\n", write_filename);
+            // printf(" extracting: %s\n", write_filename);
 
             do {
                 err = unzReadCurrentFile(uf, buf, size_buf);
@@ -150,11 +154,11 @@ int getUnzipFile(unzFile uf) {
     return err;
 }
 
-int MiniUnZip(std::string zipDir) {
+int MiniUnZip(const char *zipDir, const char *unZipDir) {
     int ret = UNZ_OK;
     unz_global_info64 global_info;
     // 1.打开压缩包
-    unzFile uf = unzOpen64(zipDir.data());
+    unzFile uf = unzOpen64(zipDir);
     uLong i;
     // 2.获取压缩包全局信息
     ret = unzGetGlobalInfo64(uf, &global_info);
@@ -162,10 +166,11 @@ int MiniUnZip(std::string zipDir) {
         printf("压缩包打开失败\n");
         return ret;
     }
-    printf("正在打开压缩包%s\n", zipDir.data());
+    printf("正在打开压缩包%s\n", zipDir);
+     mkdir(unZipDir, 0775);
     for (i = 0; i < global_info.number_entry; ++i) {
         printf("%ld ", i);
-        ret = getUnzipFile(uf);
+        ret = getUnzipFile(uf, unZipDir);
         if (ret != UNZ_OK) break;
 
         if ((i + 1) < global_info.number_entry) {
@@ -178,7 +183,9 @@ int MiniUnZip(std::string zipDir) {
     }
 }
 
-int main(int argc, char* argv[]) {
-    std::string zipDir = argv[1];
-    MiniUnZip(zipDir);
+int main() {
+    const char* zipDir = "/data/压缩包/60.zip";
+    const char* unZipDir = "/data/60";
+    printf("%s\n", unZipDir);
+    MiniUnZip(zipDir, unZipDir);
 }
