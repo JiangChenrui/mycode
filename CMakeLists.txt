@@ -8,3 +8,5 @@ link_directories(lib/x86_64)
 
 add_executable(testUnzip ${UNZIP})
 target_link_libraries(testUnzip z)
+
+add_executable(getDirPath src/getDirPath/getDirPath.cpp)

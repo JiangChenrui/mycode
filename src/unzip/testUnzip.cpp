@@ -183,9 +183,8 @@ int MiniUnZip(const char *zipDir, const char *unZipDir) {
     }
 }
 
-int main() {
-    const char* zipDir = "/data/压缩包/60.zip";
-    const char* unZipDir = "/data/60";
-    printf("%s\n", unZipDir);
-    MiniUnZip(zipDir, unZipDir);
+int main(int argc, char* argv[]) {
+    std::string zipDir = argv[1];
+    std::string unZipDir = argv[2];
+    MiniUnZip(zipDir.data(), unZipDir.data());
 }
