@@ -4,7 +4,7 @@ set(CMAKE_CXX_STANDARD 11)
 
 include_directories(src/include src/include/minizip)
 set(UNZIP src/unzip/testUnzip.cpp src/unzip/ioapi.c src/unzip/unzip.c)
-link_directories(lib/hisi)
+link_directories(lib/x86_64)
 
 add_executable(testUnzip ${UNZIP})
 target_link_libraries(testUnzip z)
