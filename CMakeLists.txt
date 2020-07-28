@@ -10,3 +10,5 @@ add_executable(testUnzip ${UNZIP})
 target_link_libraries(testUnzip z)
 
 add_executable(getDirPath src/getDirPath/getDirPath.cpp)
+
+add_executable(setTime src/cgi/setTime.cpp)

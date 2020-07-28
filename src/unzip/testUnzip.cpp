@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <utime.h>
 
+#include <iostream>
 #include <string>
 
 #include "ioapi.h"
@@ -167,11 +168,14 @@ int MiniUnZip(const char *zipDir, const char *unZipDir) {
         return ret;
     }
     printf("正在打开压缩包%s\n", zipDir);
-     mkdir(unZipDir, 0775);
+    mkdir(unZipDir, 0775);
     for (i = 0; i < global_info.number_entry; ++i) {
         printf("%ld ", i);
         ret = getUnzipFile(uf, unZipDir);
-        if (ret != UNZ_OK) break;
+        if (ret != UNZ_OK) {
+            printf("压缩出错，退出程序\n");
+            break;
+        }
 
         if ((i + 1) < global_info.number_entry) {
             ret = unzGoToNextFile(uf);
@@ -181,10 +185,12 @@ int MiniUnZip(const char *zipDir, const char *unZipDir) {
             }
         }
     }
+    return ret;
 }
 
 int main(int argc, char* argv[]) {
     std::string zipDir = argv[1];
     std::string unZipDir = argv[2];
-    MiniUnZip(zipDir.data(), unZipDir.data());
+    int ret = MiniUnZip(zipDir.data(), unZipDir.data());
+    std::cout << ((ret == UNZ_OK) ? 1:0) << std::endl;
 }
