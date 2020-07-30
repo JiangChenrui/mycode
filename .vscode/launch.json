@@ -4,7 +4,7 @@
     // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
+    
         {
             "name": "g++",
             "type": "cppdbg",
@@ -27,24 +27,42 @@
             "miDebuggerPath": "/usr/bin/gdb"
         },
         {
-            "name": "g++项目",
+            "name": "c++工程",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/getDirPath",
+            "program": "${workspaceFolder}/cmake-build-debug/${fileBasenameNoExtension}",
             "args": [],
-            "stopAtEntry": false,
+            "stopAtEntry": true,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "logging": {
+              "trace": true,
+              "traceResponse": true,
+              "engineLogging": true
+            },
+            "preLaunchTask": "Build with CLion CMake",
+            "miDebuggerPath": "/usr/bin/gdb"
+        },
+        {
+            "name": "gdb调试cmake",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${command:cmake.launchTargetPath}",
+            "args": [],
+            "stopAtEntry": true,
             "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
             "setupCommands": [
                 {
-                    "description": "为 gdb 启用整齐打印",
+                    "description": "Enable pretty-printing for gdb",
                     "text": "-enable-pretty-printing",
                     "ignoreFailures": true
                 }
-            ],
-            "miDebuggerPath": "/usr/bin/gdb"
+            ]
         }
     ]
 }

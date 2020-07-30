@@ -17,6 +17,26 @@
             "problemMatcher": [
                 "$gcc"
             ]
+        },
+        {
+            "label": "Configure with Clion Cmake",
+            "type": "shell",
+            "command": "mkdir ${workspaceFolder}/cmake-build-debug || cd ${workspaceFolder}/cmake-build-debug && cmake ../.",
+            "args": []
+        },
+        {
+            "label": "Build with CLion CMake",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "${workspaceFolder}/cmake-build-debug",
+                "--target",
+                "main",
+                "--",
+                "-j",
+                "6"
+            ]
         }
     ]
 }

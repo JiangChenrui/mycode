@@ -49,6 +49,6 @@
         "iomanip": "cpp"
     },
     "code-runner.executorMap": {
-        "cpp": "cd $dir && g++ $fileName -o /home/jiang/workspace/mycode/build/$fileNameWithoutExt && /home/jiang/workspace/mycode/build/$fileNameWithoutExt",
+        "cpp": "cd $dir && g++ $fileName -o $workspaceRoot/build/$fileNameWithoutExt && $workspaceRoot/build/$fileNameWithoutExt",
     }
 }

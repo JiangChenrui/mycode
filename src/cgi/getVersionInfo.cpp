@@ -1,9 +1,6 @@
 #include "cgic.h"
 #include "cJSON.h"
 #include <string.h>
-// #include "common.h"
-// #include "../../ipc/IPCClient.h"
-// #include "userSql.h"
 #include <string>
 
 extern char *cgiQueryString;
