@@ -19,6 +19,13 @@ int stringToArray(std::string strStreams, std::vector <int> &streams);
  */
 int checkDirIsZip(char *dir);
 
+/**
+ * 校验文件是否为jpg图片
+ * @param imgPath
+ * @return
+ */
+bool checkIsImage(std::string imgPath);
+
 float round(float f, int bits);
 
 #endif //COMMON_H

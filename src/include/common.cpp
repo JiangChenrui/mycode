@@ -46,3 +46,18 @@ int checkDirIsZip(char *dir) {
     ret = strcmp(ptr, "zip");
     return ret;
 }
+
+/**
+ * 校验文件后缀是否为zip
+ * @param dir
+ * @return
+ */
+bool checkIsImage(std::string imgPath) {
+    if (imgPath.empty())
+        return false;
+    std::string type = imgPath.substr(imgPath.find_last_of('.') + 1);
+    if (type.compare("jpg") == 0 || type.compare("jpeg") == 0)
+        return true;
+    else 
+        return false;
+}

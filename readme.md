@@ -21,3 +21,8 @@ http传递的图片含有“data:image/jpg;base64,”前缀，会对base64的解
 * $fullFileName：正在运行的代码文件的全名 
 * $fileName：正在运行的代码文件的基本名称，即没有目录的文件 
 * $fileNameWithoutExt：代码文件的基本名称，不带扩展名
+
+## [c++面试](https://blog.csdn.net/u014796694/article/details/81210868?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromBaidu-2.compare&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromBaidu-2.compare)
+
+## [博客搭建](https://blog.objectspace.cn/2019/08/15/%E4%BB%8E%E9%9B%B6%E6%90%AD%E5%BB%BAHexo%E5%8D%9A%E5%AE%A2%E5%B9%B6%E9%83%A8%E7%BD%B2%E9%98%BF%E9%87%8C%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8-%E5%A5%B6%E5%A6%88%E7%BA%A7%E6%95%99%E5%AD%A6/#)
+

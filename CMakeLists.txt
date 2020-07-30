@@ -3,7 +3,7 @@ PROJECT(TESTUNZIP)
 set(CMAKE_CXX_STANDARD 11)
 
 include_directories(src/include src/include/minizip)
-link_directories(lib/x86_64)
+link_directories(lib)
 
 set(UNZIP src/unzip/testUnzip.cpp src/unzip/ioapi.c src/unzip/unzip.c)
 set(COMMON src/include/common.h src/include/common.cpp)

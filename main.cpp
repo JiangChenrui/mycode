@@ -1,9 +1,10 @@
+#include <stdio.h>
 #include <string>
 #include <iostream>
 #include "common.h"
 
 int main() { 
-    char dir[128] = {"test.zip"};
-    std::cout << checkDirIsZip(dir) << std::endl;
+    std::string imgPath = "build";
+    std::cout << remove(imgPath.data()) << std::endl;
     return 0;
 }
