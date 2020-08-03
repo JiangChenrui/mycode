@@ -6,7 +6,6 @@
 #include "common.h"
 
 int main() {
-    std::string imgPath = "build";
-    std::cout << remove(imgPath.data()) << std::endl;
+    std::cout << "hello world" << std::endl;
     return 0;
 }
