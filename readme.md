@@ -28,3 +28,8 @@ http传递的图片含有“data:image/jpg;base64,”前缀，会对base64的解
 
 ## [博客搭建](https://blog.objectspace.cn/2019/08/15/%E4%BB%8E%E9%9B%B6%E6%90%AD%E5%BB%BAHexo%E5%8D%9A%E5%AE%A2%E5%B9%B6%E9%83%A8%E7%BD%B2%E9%98%BF%E9%87%8C%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8-%E5%A5%B6%E5%A6%88%E7%BA%A7%E6%95%99%E5%AD%A6/#)
 
+## v2ray订阅地址
+
+    https://raw.githubusercontent.com/ssrsub/ssr/master/v2ray
+
+
