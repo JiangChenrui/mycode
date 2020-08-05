@@ -30,6 +30,5 @@ http传递的图片含有“data:image/jpg;base64,”前缀，会对base64的解
 
 ## v2ray订阅地址
 
-    https://raw.githubusercontent.com/ssrsub/ssr/master/v2ray
-
+    https://github.com/Helpsoftware/fanqiang
 

@@ -11,6 +11,8 @@ void sizeof_print() {
     cout << "long long类型所占内存空间为:" << sizeof(long long) << endl;
     cout << "float类型所占内存空间为：" << sizeof(float) << endl;
     cout << "double类型所占内存空间为：" << sizeof(double) << endl;
+    cout << "char类型所占内存空间为：" << sizeof(char) << endl;
+    cout << "char*类型所占内存空间为：" << sizeof(char*) << endl;
 }
 void char_study() {
     char ch = 'a';

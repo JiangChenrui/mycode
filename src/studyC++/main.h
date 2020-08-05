@@ -1,0 +1,5 @@
+#include "dataType.cpp"
+#include "loop.cpp"
+#include "array.cpp"
+#include "pointer.cpp"
+#include "structStudy.cpp"
