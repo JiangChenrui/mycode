@@ -31,3 +31,30 @@ void const_pointer() {
     *p2 = 20;
     cout << "p2 is " << *p2 << endl;
 }
+
+int *func() {
+    // 函数的局部变量和形参存放在栈区，函数执行完成删除
+    // 使用new会将分配内存到堆区，返回堆区地址。
+    int *a = new int(10);
+    return a;
+}
+
+void quote() {
+    // 引用必须初始化，初始化后不可以改变
+    int a = 10;
+    int &b = a;
+    int  c = 20;
+    b = c; // 赋值
+}
+
+// int main() {
+//     int *p = func();
+//     cout << *p << endl;
+//     cout << *p << endl;
+//     // 指针的指针
+//     int *a = new int (10);
+//     int **b = &a;
+//     cout << **b << endl;
+//     delete p;
+//     return 0;
+// }
