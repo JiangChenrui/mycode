@@ -1,6 +1,9 @@
 #include <iostream>
 #include "Sqlist.hpp"
 #include "LinkList.hpp"
+#include "stack.hpp"
+#include "MyQueue.hpp"
+#include "MyTree.hpp"
 
 using namespace std;
 
@@ -98,8 +101,76 @@ void test02() {
     }while (i != 0);
 }
 
+void test03() {
+    Stack<char> p(5);
+    p.Push('s');
+    p.Push('t');
+    p.Push('a');
+    p.Push('c');
+    p.Push('k');
+    p.StackTraverse();
+
+    char ele;
+    p.Pop(ele);
+    cout << ele << endl;
+    p.StackTraverse();
+}
+
+void test04() {
+    MyQueue<char> q;
+    q.InQueue('q');
+    q.InQueue('u');
+    q.InQueue('e');
+    q.InQueue('u');
+    q.InQueue('e');
+    q.QueueTraverse();
+    q.OutQueue();
+    q.QueueTraverse();
+}
+
+void test05() {
+    Tree tree(16);//分配十六个节点
+
+    tree.addNode(0, 1);
+    tree.addNode(0, 2);
+    tree.addNode(0, 3);
+    tree.addNode(0, 4);
+    tree.addNode(0, 5);
+    tree.addNode(0, 6);
+    tree.addNode(3, 7);
+    tree.addNode(4, 8);
+    tree.addNode(4, 9);
+    tree.addNode(5, 10);
+    tree.addNode(5, 11);
+    tree.addNode(5, 12);
+    tree.addNode(6, 13);
+    tree.addNode(9, 14);
+    tree.addNode(9, 15);
+
+    cout << "Tree1: " << endl;
+    tree.preOrder();
+    tree.print();    
+
+    Tree tree2(9);
+    tree2.addNode(0, 1);
+    tree2.addNode(0, 2);
+    tree2.addNode(1, 3);
+    tree2.addNode(1, 4);
+    tree2.addNode(2, 5);
+    tree2.addNode(3, 6);
+    tree2.addNode(5, 7);
+    tree2.addNode(5, 8);
+
+    cout << "Tree2: " << endl;
+    tree2.preOrder();
+    tree2.print();
+}
+
 int main() {
     // test01();
-    test02();
+    // test02();
+    // test03();
+    // test04();
+    test05();
     return 0;
 }
