@@ -4,6 +4,8 @@
 #include "stack.hpp"
 #include "MyQueue.hpp"
 #include "MyTree.hpp"
+#include "MySort.hpp"
+#include "MyAlgorithm.hpp"
 
 using namespace std;
 
@@ -166,11 +168,86 @@ void test05() {
     tree2.print();
 }
 
+void SortTest01() {
+    Student stu[4] = {
+        {1004, "TOM", 100},
+        {1002, "LILY", 95},
+        {1001, "ANN", 93},
+        {1003, "LUCY", 98}
+    };
+    int addr;
+    addr = search(stu, 4, 1001);
+    if (addr == -1) {
+        cout << "查无此人" << endl;
+        return;
+    }
+    cout << "学号：" << stu[addr].id << endl;
+    cout << "姓名：" << stu[addr].name << endl;
+    cout << "分数：" << stu[addr].score << endl;
+}
+
+void SortTest02() {
+    int arr[10] = {2, 3, 5, 7, 8, 10, 12, 15, 19, 20};
+    cout << "数组输出" << endl;
+    for (int i = 0; i < sizeof(arr) / sizeof(int); ++i)
+        cout << arr[i] << ' ';
+    cout << endl;
+    int n, addr;
+    cout << "请输入查找的数" << endl;
+    cin >> n;
+    addr = bin_search(arr, 10, n);
+    if (addr != -1) {
+        cout << n << " 查找成功，位于" << addr << endl;
+    } else  {
+        cout << "查找失败" << endl;
+    }
+}
+
+void SortTest03() {
+    int N = 20000;
+    int *arr = generateRandomArray(N, 2, 100000);
+    // insertSort(arr, N);
+    // selectSort(arr, N);
+    // BubbleSort(arr, N);
+    // shellSort(arr, N);
+    // quickSort(arr, N);
+    quickSort2(arr, N);
+    // headSort(arr, N);
+    printArray(arr, N);
+}
+
+void AlgorithmTest01() {
+    // cout << P(6, 6) << endl;
+    int Q[4][4];
+    for (int i = 0; i < 4; i++)
+        for (int j = 0; j < 4; j++)
+            Q[i][j] = 0;
+    Queen(0, Q);
+    cout << count << endl;
+}
+
+void AlgorithmTest02() {
+    cout << UpStairs(20) << endl;
+    cout << UpStairs2(20) << endl;
+}
+
+void AlgorithmTest03() {
+    cout << miniDistance("horse", "ros") << endl;
+}
+
 int main() {
     // test01();
     // test02();
     // test03();
     // test04();
-    test05();
+    // test05();
+    // SortTest01();
+    // SortTest02();
+    // SortTest03();
+    // getPrime(1, 100);
+    // AlgorithmTest02();
+    // AlgorithmTest03();
+    // testFindKth();
+    // cout << isValid("((())])]") << endl;
     return 0;
 }
