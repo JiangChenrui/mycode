@@ -443,4 +443,81 @@ ListNode* addInList(ListNode* head1, ListNode* head2) {
     }
     return head1;
 }
+
+/**
+ * 写一个函数，求两个整数之和，要求在函数体内不得使用+、-、*、/四则运算符号。
+ */
+int MyAdd (int num1, int num2) {
+    while (num2 != 0) {
+        int temp = num1 ^ num2;
+        num2 = (num1 & num2) << 1;
+        num1 = temp;
+    }
+    return num1;
+}
+
+// 将字符串转换为一个整数
+int StrToInt(string str) {
+    if (str.empty())
+        return 0;
+    int res = 0;
+    int mark = (str[0] == '-') ? -1 : 1;
+    int i = (str[0] == '+' || str[0] == '-') ? 1 : 0;
+    for (; i < str.size(); ++i) {
+        if (str[i] < '0' || str[i] > '9')
+            return 0;
+        res = res*10 + str[i] - '0';
+    }
+    return res*mark;
+}
+
+// 数组中重复的数字
+bool duplicate(int numbers[], int length, int* duplication) {
+    if (length == 0 || length == 1)
+        return false;
+    int *tempArr = new int[length]();
+    for (int i = 0; i < length; ++i) {
+        if (tempArr[numbers[i]] == 0)
+            tempArr[numbers[i]] = 1;
+        else {
+            *duplication = numbers[i];
+            return true;
+        }
+    }
+    return false;
+}
+
+// 构建乘积数组
+vector<int> multiply(const vector<int>& A) {
+    vector<int> B(A.size(), 1);
+    B[0] = 1;
+    for (int i = 1; i < A.size(); ++i) {
+        B[i] = B[i-1] * A[i-1];
+    }
+    int temp = 1;
+    for (int j = A.size() - 1; j >= 0; j--) {
+        B[j] *= temp;
+        temp *= A[j];
+    }
+    return B;
+}
+
+// 正则表达式匹配
+bool match(char* str, char* pattern) {
+    if (*str == '\0' && *pattern == '\0')
+        return true;
+    if (*pattern == '\0')
+        return false;
+    if (*(pattern+1) != '*') {
+        if (*str != '\0' && (*str == *pattern || *pattern == '.'))
+            return match(str+1, pattern+1);
+        else 
+            return false;
+    } else {
+        bool ret = false;
+        if (*str != '\0' && (*str == *pattern || *pattern == '.'))
+            ret = match(str+1, pattern);
+        return ret || match(str, pattern + 2);
+    }
+}
 #endif
