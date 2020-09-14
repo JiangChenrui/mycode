@@ -3,6 +3,9 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <cstring>
+#include <queue>
+#include <algorithm>
 using namespace std;
 
 /**
@@ -519,5 +522,405 @@ bool match(char* str, char* pattern) {
             ret = match(str+1, pattern);
         return ret || match(str, pattern + 2);
     }
+}
+
+/**
+ * 表示数值的字符串
+ * 第二次出现加减号，必须紧跟在e之后
+ * e之后不能有小数
+ */
+bool isNumeric(char *string) {
+    // 标记符号、小数点、e是否出现过
+    bool sign = false, decimal = false, hasE = false;
+    for (int i = 0; i < strlen(string); ++i) {
+        if (string[i] == '+' || string[i] == '-') {
+            if (!sign && i > 0 && string[i-1] != 'e' && string[i-1] != 'E')
+                return false;
+            if (sign && string[i-1] != 'e' && string[i-1] != 'E')
+                return false;
+            sign = true;
+        } else if (string[i] == 'e' || string[i] == 'E') {
+            if (i == strlen(string) - 1)
+                return false;
+            if (hasE)
+                return false;
+            hasE = true;
+        } else if (string[i] == '.') {
+            if (hasE || decimal)
+                return false;
+            decimal = true;
+        } else if (string[i] < '0' || string[i] > '9')
+            return false;
+    }
+    return true;
+}
+
+// 字符流中第一个不重复的字符
+class Solution {
+public:
+    Solution() {
+        memset(cnt, 0, sizeof(cnt)/sizeof(int));
+    }
+    ~Solution() {
+        free(cnt);
+    }
+    void Insert(char ch) {
+        ++cnt[ch - '\0'];
+        if (cnt[ch - '\0'] == 1)
+            data.push(ch);
+    }
+    char FirstAppearingOnce() {
+        while (!data.empty() && cnt[data.front() - '\0'] > 1)
+            data.pop();
+        if (data.empty())
+            return '#';
+        return data.front();
+    }
+private:
+    queue<char> data;
+    unsigned cnt[128];
+};
+
+// 链表中环的入口结点
+ListNode* EntryNodeOfLoop(ListNode* pHead) {
+    ListNode *slow, *fast;
+    slow = fast = pHead;
+    while (fast != NULL && fast->next != NULL) {
+        slow = slow->next;
+        fast = fast->next->next;
+        if (fast == slow)
+            break;
+    }
+    if (fast == NULL || fast->next == NULL)
+        return NULL;
+    fast = pHead;
+    while (fast != slow) {
+        fast = fast->next;
+        slow = slow->next;
+    }
+    return slow;
+}
+
+// 删除链表中重复的结点
+ListNode* deleteDuplication(ListNode* pHead) {
+    ListNode *slow, *fast;
+    ListNode *Head = new ListNode(0);
+    Head->next = pHead;
+    slow = Head;
+    fast = Head->next;
+    while (fast != NULL) {
+        if (fast->next != NULL && fast->val == fast->next->val) {
+            while (fast->next != NULL && fast->val == fast->next->val)
+                fast = fast->next;
+            slow->next = fast->next;
+            fast = fast->next;
+        } else {
+            slow = slow->next;
+            fast = fast->next;
+        }
+    } 
+    return Head->next;
+}
+
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) :val(x), left(NULL), right(NULL) {}
+};
+
+void inorder(TreeNode *node, vector<int> &res) {
+    if (node == NULL)
+        return;
+    inorder(node->left, res);
+    res.push_back(node->val);
+    inorder(node->right, res);
+}
+
+// 二叉树中序遍历
+vector<int> inorderTraversal(TreeNode* root) {
+    vector<int> res;
+    inorder(root, res);
+    return res;
+}
+
+// 非递归方式中序遍历
+vector<int> inorderTraversal(TreeNode* root) {
+    vector<int> res;
+    stack<TreeNode*> node;
+    while (root != NULL || !node.empty()) {
+        for (; root != NULL; root = root->left) {
+            node.push(root);
+        }
+        res.push_back(node.top()->val);
+        root = node.top()->right;
+        node.pop();
+    }
+    return res;
+}
+
+void preorder(TreeNode* node, vector<int> &res) {
+    if (!node)
+        return;
+    res.push_back(node->val);
+    preorder(node->left, res);
+    preorder(node->right, res);
+}
+// 二叉树前序遍历
+vector<int> preorderTraversal(TreeNode* root) {
+    vector<int> res;
+    preorder(root, res);
+    return res;
+}
+
+// 使用迭代方式实现前序遍历
+vector<int> preorderTraversal(TreeNode* root) {
+    vector<int> res;
+    stack<TreeNode*> node;
+    while (root!=NULL || !node.empty()) {
+        for (; root!=NULL; root = root->left) {
+            res.push_back(root->val);
+            node.push(root);
+        }
+        root = node.top()->right;
+        node.pop();
+    }
+    return res;
+}
+
+void postorder(TreeNode* node, vector<int> &res) {
+    if (!node)
+        return;
+    postorder(node->left, res);
+    postorder(node->right, res);
+    res.push_back(node->val);
+}
+
+// 二叉树后序遍历
+vector<int> postorderTraversal(TreeNode* root) {
+    vector<int> res;
+    postorder(root, res);
+    return res;
+}
+// 使用迭代方式实现后序遍历
+vector<int> postorderTraversal(TreeNode* root) {
+    vector<int> res;
+    stack<TreeNode*> node;
+    TreeNode *cur = root;
+    while (cur != NULL || !node.empty()) {
+        while (cur) {
+            res.push_back(cur->val);
+            node.push(cur);
+            cur = cur->right;
+        }
+        cur = node.top()->left;
+        node.pop();
+    }
+    reverse(res.begin(), res.end());
+    return res;
+}
+
+void levelOrder(TreeNode* root, int level, vector<vector<int>> &v) {
+    if (root == NULL)
+        return;
+    if (v.size() < level + 1)
+        v.resize(level + 1);
+    v[level].push_back(root->val);
+    levelOrder(root->left, level+1, v);
+    levelOrder(root->right, level+1, v);
+}
+// 二叉树的层序遍历
+vector<vector <int>> levelOrder(TreeNode* root) {
+    vector<vector <int>> res;
+    levelOrder(root, 0, res);
+    return res;
+}
+
+// 迭代法
+vector<vector <int>> levelOrder(TreeNode* root) {
+    vector<vector <int>> res;
+    if (root == NULL)
+        return res;
+    queue<TreeNode*> q;
+    q.push(root);
+    int level = 0;
+    while (!q.empty()) {
+        int size = q.size();
+        res.push_back(vector<int>());
+        for (int i = 0; i < size; ++i) {
+            TreeNode* temp = q.front();
+            q.pop();
+            res[level].push_back(temp->val);
+            if (temp->left != NULL)
+                q.push(temp->left);
+            if (temp->right != NULL)
+                q.push(temp->right);
+        }
+        ++level;
+    }
+    return res;
+}
+
+void zigzagLevel(TreeNode* node, int level, vector<vector <int>> &res) {
+    if (node == NULL)
+        return;
+    if (res.size() < level + 1)
+        res.push_back(vector<int>());
+    if (level % 2 == 0)
+        res[level].push_back(node->val);
+    else
+        res[level].insert(res[level].begin(), node->val);
+    zigzagLevel(node->left, level+1, res);
+    zigzagLevel(node->right, level+1, res);    
+}
+// 二叉树的锯齿形层次遍历
+vector<vector <int>> zigzagLevelOrder(TreeNode* root) {
+    vector<vector <int>> res;
+    zigzagLevel(root, 0, res);
+    return res;
+}
+
+// 迭代法
+vector<vector <int>> zigzagLevelOrder(TreeNode* root) {
+    vector<vector <int>> res;
+    if (root == NULL)
+        return res;
+    queue<TreeNode*> q;
+    int level = 0;
+    q.push(root);
+    while (!q.empty()) {
+        int size = q.size();
+        res.push_back(vector<int>());
+        for (int i = 0; i < size; ++i) {
+            TreeNode* temp = q.front();
+            q.pop();
+            if (level % 2 == 0)
+                res[level].push_back(temp->val);
+            else
+                res[level].insert(res[level].begin(), temp->val);
+            if (temp->left != NULL)
+                q.push(temp->left);
+            if (temp->right != NULL)
+                q.push(temp->right);
+        }
+        ++level;
+    }
+    return res;
+}
+
+// 二叉树的最大深度
+int maxDepth(TreeNode* root) {
+    queue<TreeNode*> q;
+    if (root == NULL)
+        return 0;
+    q.push(root);
+    int level = 0;
+    while (!q.empty()) {
+        int size = q.size();
+        for (int i = 0; i < size; ++i) {
+            if (q.front()->left != NULL)
+                q.push(q.front()->left);
+            if (q.front()->right != NULL)
+                q.push(q.front()->right);
+            q.pop();
+        }
+        ++level;
+    }
+    return level;
+}
+
+int maxDepth(TreeNode* root) {
+    if (root == NULL)
+        return 0;
+    return 1+max(maxDepth(root->left), maxDepth(root->right));
+}
+
+// 二叉树的层次遍历2
+vector<vector<int>> levelOrderBottom(TreeNode* root) {
+    vector<vector <int>> res;
+    if (root == NULL)
+        return res;
+    queue<TreeNode*> q;
+    q.push(root);
+    while (!q.empty()) {
+        int size = q.size();
+        vector<int> temp;
+        for (int i = 0; i < size; ++i) {
+            TreeNode* node = q.front();
+            temp.push_back(node->val);
+            q.pop();
+            if (node->left != NULL)
+                q.push(node->left);
+            if (node->right != NULL)
+                q.push(node->right);
+        }
+        res.push_back(temp);
+    }
+    reverse(res.begin(), res.end());
+    return res;
+}
+
+// 二叉树的最近公共祖先
+TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+    if (root == NULL || root == p || root == q)
+        return root;
+    TreeNode* left = lowestCommonAncestor(root->left, p, q);
+    TreeNode* right = lowestCommonAncestor(root->right, p, q);
+
+    if (left == NULL)
+        return right;
+    if (right == NULL)
+        return left;
+    if (left && right)
+        return root;
+    return NULL;
+}
+
+int GetTreeDepth(TreeNode* root) {
+    if (root == NULL)
+        return 0;
+    return 1 + max(GetTreeDepth(root->left), GetTreeDepth(root->right));
+}
+
+// 平衡二叉树
+bool isBalanced(TreeNode* root) {
+    if (root == NULL)
+        return true;
+    if (abs(GetTreeDepth(root->left) - GetTreeDepth(root->right)) > 1)
+        return false;
+    return isBalanced(root->left) && isBalanced(root->right);
+}
+
+int recur(TreeNode* node) {
+    if (node == NULL)
+        return 0;
+    int left = recur(node->left);
+    if (left == -1)
+        return -1;
+    int right = recur(node->right);
+    if (right == -1)
+        return -1;
+    return abs(left-right) < 2 ? max(left, right) + 1 : -1;
+}
+bool isBalanced(TreeNode* root) {
+    if (root == NULL)
+        return true;
+    return recur(root) != -1;
+}
+
+// 验证二叉搜索树
+bool isValidBST(TreeNode* root) {
+    stack<TreeNode*> stack;
+    long long inorder = INT32_MIN - 1;
+    while (root != NULL || !stack.empty()) {
+        for (; root != NULL; root = root->left)
+            stack.push(root);
+        if (stack.top()->val <= inorder)
+            return false;
+        inorder = stack.top()->val;
+        root = stack.top()->right;
+        stack.pop();
+    }
+    return true;
 }
 #endif

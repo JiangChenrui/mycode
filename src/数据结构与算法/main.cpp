@@ -249,10 +249,6 @@ int main() {
     // AlgorithmTest03();
     // testFindKth();
     // cout << isValid("((())])]") << endl;
-    vector <int> A = {1, 2, 3, 4, 5};
-    vector <int> B = multiply(A);
-    for (int i = 0; i < B.size(); ++i)
-        cout << B[i] << ' ';
-    cout << endl;
+    cout << isNumeric("123.45e+6") << endl;
     return 0;
 }
