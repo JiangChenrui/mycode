@@ -218,11 +218,11 @@ void SortTest03() {
 
 void AlgorithmTest01() {
     // cout << P(6, 6) << endl;
-    int Q[4][4];
+    int Q[4][4], count;
     for (int i = 0; i < 4; i++)
         for (int j = 0; j < 4; j++)
             Q[i][j] = 0;
-    Queen(0, Q);
+    Queen(0, Q, count);
     cout << count << endl;
 }
 
@@ -249,6 +249,6 @@ int main() {
     // AlgorithmTest03();
     // testFindKth();
     // cout << isValid("((())])]") << endl;
-    cout << isNumeric("123.45e+6") << endl;
+    // cout << isNumeric("123.45e+6") << endl;
     return 0;
 }

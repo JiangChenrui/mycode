@@ -6,6 +6,7 @@
 #include <cstring>
 #include <queue>
 #include <algorithm>
+#include <math.h>
 using namespace std;
 
 /**
@@ -71,7 +72,7 @@ int isCorrect(int i, int j, int (*QueenArray)[4]) {
  * @param queenNum 当前皇后数量
  * @param QueenArray 皇后数组
  */
-void Queen(int queenNum, int (*QueenArray)[4]) {
+void Queen(int queenNum, int (*QueenArray)[4], int &count) {
     int i, k;
     // 四个皇后都确定
     if (queenNum == 4) {
@@ -86,7 +87,7 @@ void Queen(int queenNum, int (*QueenArray)[4]) {
     for (i = 0; i < 4; i++) {
         if (isCorrect(i, queenNum, QueenArray)) {
             QueenArray[i][queenNum] = 1;
-            Queen(queenNum + 1, QueenArray);
+            Queen(queenNum + 1, QueenArray, count);
             QueenArray[i][queenNum] = 0;
         }
     }
@@ -922,5 +923,218 @@ bool isValidBST(TreeNode* root) {
         stack.pop();
     }
     return true;
+}
+
+// 二叉搜索树中的插入操作
+TreeNode* insertIntoBST(TreeNode* root, int val) {
+    TreeNode* node = root;
+    if (root == NULL) {
+        root = new TreeNode(val);
+        return root;
+    }
+    while (node != NULL) {
+        if (node->val > val) {
+            if (node->left != NULL)
+                node = node->left;
+            else {
+                node->left = new TreeNode(val);
+                break;
+            }
+        } else if (node->val < val){
+            if (node->right != NULL)
+                node = node->right;
+            else {
+                node->right = new TreeNode(val);
+                break;
+            }
+        }
+        
+    }
+    return root;
+}
+
+TreeNode* insertIntoBST(TreeNode* root, int val) {
+    if (root == NULL)
+        return new TreeNode(val);
+    if (root->val > val)
+        root->left = insertIntoBST(root->left, val);
+    else
+        root->right = insertIntoBST(root->right, val);
+    return root;
+}
+
+/**
+ * 二叉树的最大路径和
+ * @param root
+ * @param sum
+ * @return ret 当前结点最大路径和
+ */
+int maxPathSum(TreeNode* root, int &sum) {
+    if (root == NULL)
+        return 0;
+    // 左结点最大路径和
+    int left = max(maxPathSum(root->left, sum), 0);
+    // 右节点最大路径和
+    int right = max(maxPathSum(root->right, sum), 0);
+    // 左节点+右节点+当前节点的路径和
+    int lmr = root->val + left + right;
+    sum = max(sum, lmr);
+    // 返回当前节点可以连接父节点的最大值
+    return root->val + max(left, right);
+}
+int maxPathSum(TreeNode* root) {
+    int val = INT8_MIN;
+    maxPathSum(root, val);
+    return val;
+}
+
+// 二叉树的右视图
+vector<int> rightSideView(TreeNode* root) {
+    queue<TreeNode*> node;
+    vector<int> res;
+    if (root == NULL)
+        return res;
+    node.push(root);
+    while (!node.empty()) {
+        int size = node.size();
+        TreeNode* temp;
+        for (int i = 0; i < size; ++i) {
+            temp = node.front();
+            node.pop();
+            if (temp->left != NULL)
+                node.push(temp->left);
+            if (temp->right != NULL)
+                node.push(temp->right);
+        }
+        res.push_back(temp->val);
+    }
+    return res;
+}
+
+// 恢复二叉搜索树
+void recoverTree(TreeNode* root) {
+    if (root == NULL)
+        return;
+    stack<TreeNode*> node;
+    vector<TreeNode*> num;
+    vector<int> swap;
+    TreeNode* head = root;
+    while (head != NULL || !node.empty()) {
+        for (; head != NULL; head = head->left)
+            node.push(head);
+        num.push_back(node.top());
+        head = node.top()->right;
+        node.pop();
+    }
+    for (int i = 0; i < num.size() - 1; ++i) {
+        if (num[i]->val > num[i+1]->val)
+            swap.push_back(i);
+    }
+    if (swap.size() == 1) {
+        int temp = num[swap[0]]->val;
+        num[swap[0]]->val = num[swap[0]+1]->val;
+        num[swap[0]+1]->val = temp;     
+    } else {
+        int temp = num[swap[0]]->val;
+        num[swap[0]]->val = num[swap[1]+1]->val;
+        num[swap[1]+1]->val = temp;
+    }
+}
+
+// 最长公共子序列
+int longestCommonSubsequence(string text1, string text2) {
+    if (text1.empty() || text2.empty())
+        return 0;
+    int m = text1.size(), n = text2.size();
+    vector<vector<int>> dp(m + 1, vector<int>(n + 1));
+    for (int i = 1; i <= m; ++i) {
+        for (int j = 1; j <= n; ++j) {
+            if (text1[i-1] == text2[j-1])
+                dp[i][j] = 1 + dp[i-1][j-1];
+            else
+                dp[i][j] = max(dp[i-1][j], dp[i][j-1]);
+        }
+    }
+    return dp[m][n];
+}
+
+// 最长回文子序列
+int longestPalindromeSubseq(string s) {
+    int len = s.size();
+    vector<vector<int>> dp(len+1, vector<int>(len+1));
+    for (int i = 0; i < len; ++i) {
+        for (int j = 0; j < len; ++j) {
+            if (s[i] == s[len-1-j])
+                dp[i+1][j+1] = 1 + dp[i][j];
+            else
+                dp[i+1][j+1] = max(dp[i][j+1], dp[i+1][j]);
+        }
+    }
+    return dp[len][len];
+}
+
+int minNumSquares(int n) {
+    if (n == 0)
+        return 0;
+    int count = INT32_MAX;
+    for (int i = 1; i * i <= n; ++i)
+        count = min(count, minNumSquares(n - i * i) + 1);
+    return count;
+}
+
+// 完全平方数
+int numSquares(int n) {
+    return minNumSquares(n);
+}
+
+int numSquares(int n) {
+    vector<int> dp(n+1, n+1);
+    dp[0] = 0;
+    for (int i = 1; i <= n; ++i) {
+        for (int j = 1; j * j <= i; ++j)
+            dp[i] = min(dp[i], dp[i-j*j] + 1);
+    }
+    return dp[n];
+}
+
+// 两两交换链表中的节点
+ListNode* swapPairs(ListNode* head) {
+    ListNode* res = new ListNode(0);
+    res->next = head;
+    ListNode* first = res;
+    while (first->next != NULL && first->next->next != NULL) {
+        ListNode* second = first->next;
+        ListNode* third = first->next->next;
+
+        first->next = third;
+        second->next = third->next;
+        third->next = second;
+
+        first = second;
+    }
+    return res->next;
+}
+
+// 杨辉三角
+vector<vector<int>> generate(int numRows) {
+    vector<vector<int>> res;
+    for (int i = 0; i < numRows; ++i) {
+        res.push_back(vector<int> (i+1, 1));
+    }
+    for (int i = 2; i < numRows; ++i) {
+        for (int j = 1; j < i; ++j)
+            res[i][j] = res[i-1][j-1] + res[i-1][j];
+    }
+    return res;
+}
+
+// 杨辉三角2
+vector<int> getRow(int rowIndex) {
+    vector<int> res(rowIndex+1, 1);
+    for (int i = 2; i < rowIndex+1; ++i) {
+        for (int j = i - 1 ; j > 0; j--)
+            res[j] = res[j-1] + res[j];
+    }
+    return res;
 }
 #endif
