@@ -7,6 +7,8 @@
 #include <queue>
 #include <algorithm>
 #include <math.h>
+#include <unordered_set>
+#include <set>
 using namespace std;
 
 /**
@@ -172,6 +174,16 @@ ListNode *ReverseList(ListNode *pHead) {
         pHead = next;
     }
     return pre;
+}
+
+// 递归
+ListNode *ReverseList(ListNode* head) {
+    if (head == NULL || head->next == NULL)
+        return head;
+    ListNode* node = ReverseList(head->next);
+    head->next->next = head;
+    head->next = NULL;
+    return node;
 }
 
 int Partition(vector<int> &arr, int start, int end) {
@@ -627,7 +639,8 @@ struct TreeNode {
     int val;
     TreeNode *left;
     TreeNode *right;
-    TreeNode(int x) :val(x), left(NULL), right(NULL) {}
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+    TreeNode(int x, TreeNode* left, TreeNode* right) :val(x), left(left), right(right) {}
 };
 
 void inorder(TreeNode *node, vector<int> &res) {
@@ -875,6 +888,21 @@ TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
     if (left && right)
         return root;
     return NULL;
+}
+
+// 二叉搜索树的最近公共祖先
+TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+    if (p->val > q->val)
+        swap(p, q);
+    while (root != NULL) {
+        if (root->val < p->val)
+            root = root->right;
+        else if (root->val > q->val)
+            root = root->left;
+        else
+            break;
+    }
+    return root;
 }
 
 int GetTreeDepth(TreeNode* root) {
@@ -1136,5 +1164,281 @@ vector<int> getRow(int rowIndex) {
             res[j] = res[j-1] + res[j];
     }
     return res;
+}
+
+// 计算平方数
+double quickMul(double x, long long N) {
+    double ans = 1.0;
+    while (N > 0) {
+        if (N & 1 == 1)
+            ans *= x;
+        x *= x;
+        N = N >> 1;
+    }
+    return ans;
+}
+double quickMul(double x, long long n) {
+    if (n == 0)
+        return 1.0;
+    double half = quickMul(x, n / 2);
+    if (n % 2 == 0)
+        return half * half;
+    else
+        return half * half * x;
+}
+double myPow(double x, int n) {
+    long long N = n;
+    return N >= 0 ? quickMul(x, N) : 1.0 / quickMul(x, -N);
+}
+
+// 第k个语法符号
+int kthGrammar(int N, int K) {
+    if (N == 1)
+        return 0;
+    return kthGrammar(N - 1, (K + 1) / 2) == 0 ? (1 - (K % 2)) : (K % 2);
+}
+
+// 不同的二叉搜索树2
+vector<TreeNode*> generateTrees(int start, int n) {
+    vector<TreeNode*> ans;
+    if (start > n) return {NULL};
+    for (int i = start; i <= n; ++i) {
+        for (auto left : generateTrees(start, i - 1)) {
+            for (auto right : generateTrees(i+1, n)) {
+                TreeNode* root = new TreeNode(i, left, right);
+                ans.push_back(root);
+            }
+        }
+    }
+    return ans;
+}
+vector<TreeNode*> generateTrees(int n) {
+    if (n == 0) return {};
+    return generateTrees(1, n);
+}
+
+// 礼物的最大价值
+int maxValue(vector<vector<int>> &grid) {
+    if (grid.empty())
+        return 0;
+    int m = grid.size();
+    int n = grid[0].size();
+    vector<vector<int>> dp(m+1, vector<int>(n+1));
+    for (int i = 1; i <= m; ++i) {
+        for (int j = 1; j <= n; ++j) {
+            dp[i][j] = max(dp[i-1][j], dp[i][j-1]) + grid[i-1][j-1];
+        }
+    }
+    return dp[m][n];
+}
+
+// 滑动窗口
+// 最长不含重复字符的子字符串
+int lengthOfLongestSubstring(string s) {
+    if (s.size() == 0) return 0;
+    unordered_set<char> dp;
+    int maxStr = 0;
+    int left = 0;
+    for (int i = 0; i < s.size(); ++i) {
+        while (dp.find(s[i]) != dp.end()) {
+            dp.erase(s[left]);
+            left++;
+        }
+        maxStr = max(maxStr, i-left+1);
+        dp.insert(s[i]);
+    }
+    return maxStr;
+}
+
+// 树的子结构
+bool recur(TreeNode* A, TreeNode* B) {
+    if (B == NULL)
+        return true;
+    if (A == NULL || A->val != B->val)
+        return false;
+    return recur(A->left, B->left) && recur(A->right, B->right);
+}
+bool isSubStructure(TreeNode* A, TreeNode* B) {
+    if (A == NULL || B == NULL)
+        return false;
+    bool root = recur(A, B);
+    bool left = isSubStructure(A->left, B);
+    bool right = isSubStructure(A->right, B);
+    return root || left || right;
+}
+
+// 二叉树的镜像
+TreeNode* mirrorTree(TreeNode* root) {
+    if (root == NULL)
+        return NULL;
+    TreeNode* temp = root->left;
+    root->left = root->right;
+    root->right = temp;
+    mirrorTree(root->left);
+    mirrorTree(root->right);
+    return root;
+}
+
+// 迭代法
+TreeNode* mirrorTree(TreeNode* root) {
+    if (root == NULL)
+        return NULL;
+    stack<TreeNode*> stack;
+    stack.push(root);
+    while (!stack.empty()) {
+        TreeNode* node = stack.top();
+        stack.pop();
+        if (node->left != NULL) stack.push(node->left);
+        if (node->right != NULL) stack.push(node->right);
+        TreeNode* temp = node->left;
+        node->left = node->right;
+        node->right = temp; 
+    }
+    return root;
+}
+
+// 对称二叉树
+bool isSymmetric(TreeNode* left, TreeNode* right) {
+    if (left == NULL && right == NULL)
+        return true;
+    if (left == NULL || right == NULL)
+        return false;
+    if (left->val != right->val)
+        return false;
+    return isSymmetric(left->left, right->right) && isSymmetric(left->right, right->left);
+}
+bool isSymmetric(TreeNode* root) {
+    if (root == NULL)
+        return true;
+    return isSymmetric(root->left, root->right);
+}
+
+// 二叉树中和为某一值的路径
+void pathSum(TreeNode* root, vector<vector<int>>& res, vector<int>& temp, int sum) {
+    if (root == NULL) {
+        return;
+    }
+    temp.push_back(root->val);
+    if (root->val == sum && root->left == NULL && root->right == NULL)
+        res.push_back(temp);
+    pathSum(root->left, res, temp, sum-root->val);
+    pathSum(root->right, res, temp, sum-root->val);
+    temp.pop_back();
+}
+vector<vector<int>> pathSum(TreeNode* root, int sum) {
+    vector<vector<int>> res;
+    if (root == NULL)
+        return res;
+    vector<int> tmp;
+    pathSum(root, res, tmp, sum);
+    return res;
+}
+
+class Node {
+public:
+    int val;
+    Node* left;
+    Node* right;
+
+    Node() {}
+
+    Node(int _val) {
+        val = _val;
+        left = NULL;
+        right = NULL;
+    }
+
+    Node(int _val, Node* _left, Node* _right) {
+        val = _val;
+        left = _left;
+        right = _right;
+    }
+};
+
+// 二叉搜索树与双向链表
+class treeToDoublyList {
+public:
+    Node* treeToDoublyList(Node* root) {
+        if(root == nullptr) return nullptr;
+        dfs(root);
+        head->left = pre;
+        pre->right = head;
+        return head;
+    }
+private:
+    Node *pre, *head;
+    void dfs(Node* cur) {
+        if(cur == nullptr) return;
+        dfs(cur->left);
+        if(pre != nullptr) pre->right = cur;
+        else head = cur;
+        cur->left = pre;
+        pre = cur;
+        dfs(cur->right);
+    }
+};
+
+// 字符串的排列
+void dfs(string s, int start, set<string>& res) {
+    if (s.size() == start) {
+        res.insert(s);
+        return;
+    }
+    for (int i = start; i < s.size(); ++i) {
+        swap(s[i], s[start]);
+        dfs(s, start+1, res);
+        swap(s[i], s[start]);
+    }
+}
+void dfs(string s, int start, vector<string>& res) {
+    if (s.size() == start) {
+        res.push_back(s);
+        return;
+    }
+    set<char> st;
+    for (int i = start; i < s.size(); ++i) {
+        if (st.count(s[i])) continue;
+        st.insert(s[i]);
+        swap(s[i], s[start]);
+        dfs(s, start+1, res);
+        swap(s[i], s[start]);
+    }
+}
+vector<string> permutation(string s) {
+    vector<string> res;
+    dfs(s, 0, res);
+    return res;
+}
+
+// 二叉树第k大节点
+int kthLargest(TreeNode* root, int k) {
+    if (root == NULL)
+        return 0;
+    stack<TreeNode*> node;
+    int num = 1;
+    while (root != NULL || !node.empty()) {
+        for (; root != NULL; root = root->right) {
+            node.push(root);
+        }
+        root = node.top()->left;
+        if (num == k)
+            return node.top()->val;
+        node.pop();
+        num++;
+    }
+    return 0;
+}
+
+// 二叉搜索树的后序遍历序列
+bool recur(vector<int> postorder, int start, int end) {
+    if (start >= end) return true;
+    int p = start;
+    while (postorder[p] < postorder[end]) p++;
+    int m = p;
+    while (postorder[p] > postorder[end]) p++;
+    return p==end && recur(postorder, start, m-1) && recur(postorder, m, end-1);
+}
+bool verifyPostorder(vector<int>& postorder) {
+    return recur(postorder, 0, postorder.size()-1);
 }
 #endif
