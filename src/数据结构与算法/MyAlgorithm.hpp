@@ -8,7 +8,9 @@
 #include <algorithm>
 #include <math.h>
 #include <unordered_set>
+#include <unordered_map>
 #include <set>
+#include <sstream>
 using namespace std;
 
 /**
@@ -1356,7 +1358,7 @@ public:
 };
 
 // 二叉搜索树与双向链表
-class treeToDoublyList {
+class treeToDouble {
 public:
     Node* treeToDoublyList(Node* root) {
         if(root == nullptr) return nullptr;
@@ -1440,5 +1442,440 @@ bool recur(vector<int> postorder, int start, int end) {
 }
 bool verifyPostorder(vector<int>& postorder) {
     return recur(postorder, 0, postorder.size()-1);
+}
+
+// 数据流中的中位数
+class MedianFinder {
+public:
+    MedianFinder() {}
+    void addNum(int num) {
+        if (A.size() != B.size()) {
+            A.push(num);
+            B.push(A.top());
+            A.pop();
+        } else {
+            B.push(num);
+            A.push(B.top());
+            B.pop();
+        }
+    }
+    double findMedian() {
+        return A.size() != B.size() ? A.top() : (A.top() + B.top()) / 2.0;
+    }
+private:
+    priority_queue<int, vector<int>, greater<int>> A;
+    priority_queue<int, vector<int>, less<int>> B;
+};
+
+// 左旋字符串
+string reverseLeftWords(string s, int n) {
+    // return s.substr(n, s.size()) + s.substr(0, n);
+    reverse(s.begin(), s.begin() + n);
+    reverse(s.begin() + n, s.end());
+    reverse(s.begin(), s.end());
+    return s;
+}
+
+// 滑动窗口的最大值
+int findMax(const vector<int> nums, int i, int j) {
+    int maxval = nums[i];
+    for (; i <= j; ++i) {
+        maxval = max(maxval, nums[i]);
+    }
+    return maxval;
+}
+vector<int> maxSlidingWindow(vector<int>& nums, int k) {
+    vector<int> ans;
+    if (nums.size() == 0)
+        return ans;
+    int maxval = findMax(nums, 0, k-1);
+    ans.push_back(maxval);
+    for (int j = k, i = 1; j < nums.size(); ++j, ++i) {
+        if (nums[j] > maxval)
+            maxval = nums[j];
+        else if (nums[i-1] == maxval)
+            maxval = findMax(nums, i, j);
+        ans.push_back(maxval);
+    }
+    return ans;
+}
+
+// 字符串转换为整数
+int strToInt(string str) {
+    int res = 0, bndry = INT32_MAX / 10;
+    int i = 0, sign = 1, length = str.size();
+    if (length == 0)
+        return 0;
+    while (str[i] == ' ')
+        if (++i == length) return 0;
+    if (str[i] == '-') sign = -1;
+    if (str[i] == '-' || str[i] == '+') i++;
+    for (int j = i; j < length; j++) {
+        if (str[j] < '0' || str[j] > '9') break;
+        if (res > bndry || res == bndry && str[j] > '7')
+            return sign == 1 ? INT32_MAX : INT32_MIN;
+        res = res * 10 + (str[j] - '0');
+    }
+    return sign*res;
+}
+
+// 股票的最大利润
+int maxProfit(vector<int>& prices) {
+    int cost = INT32_MAX, profit = 0;
+    for (int price : prices) {
+        cost = min(cost, price);
+        profit = max(profit, price-cost);
+    }
+    return profit;
+}
+
+// 买卖股票的最佳时机二
+int maxProfit(vector<int>& prices) {
+    int profit = 0;
+    for (int i = 1; i < prices.size(); ++i) {
+        if (prices[i] > prices[i-1])
+            profit += prices[i] - prices[i-1];
+    }
+    return profit;
+}
+int maxProfit(vector<int>& prices) {
+    int n = prices.size();
+    int dp_i_0 = 0, dp_i_1 = -prices[0];
+    for (int i = 0; i < n; ++i) {
+        int temp = dp_i_0;
+        dp_i_0 = max(dp_i_0, dp_i_1 + prices[i]);
+        dp_i_1 = max(dp_i_1, temp-prices[i]);
+    }
+    return dp_i_0;
+}
+
+// 买卖股票的最佳时机三
+int maxProfit(vector<int>& prices) {
+    int days = prices.size();
+    vector<vector<vector<int>>> dp(days, vector<vector<int>>(3, vector<int>(2)));
+    for (int i = 0; i < days; ++i)
+        for (int j = 0; j < 3; ++j) {
+            if (i - 1 == -1) {
+                dp[i][j][0] = 0;
+                dp[i][j][1] = -prices[i];
+                continue;
+            }
+            if (j == 0) {
+                dp[i][j][0] = 0;
+                dp[i][j][1] = max(dp[i-1][0][1], dp[i-1][0][0]-prices[i]);
+                continue;
+            }
+            dp[i][j][0] = max(dp[i-1][j][0], dp[i-1][j][1] + prices[i]);
+            dp[i][j][1] = max(dp[i-1][j][1], dp[i-1][j-1][0]-prices[i]);
+        }
+    return dp[days-1][2][0];
+}
+
+// 买卖股票的最佳时机四
+int maxProfit(int k, vector<int>& prices) {
+    int days = prices.size();
+    if (k == 0)
+        return 0;
+    if (k > days/2)
+        maxProfit(prices);
+    vector<vector<vector<int>>> dp(days, vector<vector<int>>(k+1, vector<int>(2)));
+        for (int i = 0; i < days; ++i)
+        for (int j = 0; j <= k; ++j) {
+            if (i - 1 == -1) {
+                dp[i][j][0] = 0;
+                dp[i][j][1] = -prices[i];
+                continue;
+            }
+            if (j == 0) {
+                dp[i][j][0] = 0;
+                dp[i][j][1] = max(dp[i-1][0][1], dp[i-1][0][0]-prices[i]);
+                continue;
+            }
+            dp[i][j][0] = max(dp[i-1][j][0], dp[i-1][j][1] + prices[i]);
+            dp[i][j][1] = max(dp[i-1][j][1], dp[i-1][j-1][0]-prices[i]);
+        }
+    return dp[days-1][k][0];
+}
+
+// 矩阵中的路径
+bool dfs(vector<vector<char>>& board, string& word, int i, int j, int k) {
+    if (i >= board.size() || j >= board[0].size() || i < 0 || j < 0 || board[i][j] != word[k])
+        return false;
+    if (k == word.size() - 1) return true;
+    char temp = board[i][j];
+    board[i][j] = '\0';
+    if (dfs(board, word, i+1, j, k+1) || dfs(board, word, i-1, j, k+1) ||
+        dfs(board, word, i, j+1, k+1) || dfs(board, word, i, j-1, k+1) )
+                    return true;
+    board[i][j] = temp;
+    return false;
+}
+bool exist(vector<vector<char>>& board, string word) {
+    for (int i = 0; i < board.size(); ++i) {
+        for (int j = 0; j < board[0].size(); ++j)
+            if (dfs(board, word, i, j, 0)) 
+                return true;
+    }
+    return false;
+}
+
+// 把数组排成最小的数
+string minNumber(vector<int> &nums) {
+    string res;
+    vector<string> strs;
+    for (auto a:nums) {
+        strs.push_back(to_string(a));
+    }
+    sort(strs.begin(), strs.end(), [](string &x, string &y) {return x+y < y+x;});
+    for (auto a:strs) {
+        res += a;
+    }
+    return res;
+}
+
+// 扑克牌中的顺子
+bool isStraight(vector<int> &nums) {
+    sort(nums.begin(), nums.end());
+    int flag = 0;
+    for (int i = 0; i < nums.size()-1; ++i) {
+        if (nums[i] == 0) {
+            flag++;
+            continue;
+        }
+        if (nums[i]+1 == nums[i+1])
+            continue;
+        else if (nums[i] == nums[i+1])
+            return false;
+        else {
+            flag -= nums[i+1] - nums[i] - 1;
+        }
+        if (flag < 0)
+            return false;
+    }
+    return true;
+}
+bool isStraight(vector<int> &nums) {
+    unordered_set<int> repeat;
+    int maxNum = 0, minNum = 14;
+    for (int num:nums) {
+        if (num == 0) continue;
+        maxNum = max(maxNum, num);
+        minNum = min(minNum, num);
+        if (repeat.find(num) != repeat.end()) return false;
+        repeat.insert(num);
+    }
+    return maxNum - minNum < 5;
+}
+
+// 数组中重复的数字
+int findRepeatNumber(vector<int>& nums) {
+    unordered_set<int> repeat;
+    for (int num:nums) {
+        if (repeat.find(num) != repeat.end()) return num;
+        repeat.insert(num);
+    }
+    return -1;
+}
+int findRepeatNumber(vector<int> &nums) {
+    unordered_map<int , bool> map;
+    for (int num : nums) {
+        if (map[num]) return num;
+        map[num] = true;
+    }
+    return -1;
+}
+
+// 二维数组中的查找
+bool findNumberIn2DArray(vector<vector<int>> &matrix, int target) {
+    int i = matrix.size() - 1, j = 0;
+    while (i >=0 && j < matrix[0].size()) {
+        if (matrix[i][j] == target)
+            return true;
+        else if (matrix[i][j] > target)
+            i--;
+        else
+            j++;
+    }
+    return false;
+}
+
+// 旋转数组的最小数字
+int minArray(vector<int> &numbers) {
+    int end = numbers.size() - 1;
+    int start = 0;
+    while (start < end) {
+        int mid = (end + start) / 2;
+        if (numbers[mid] < numbers[end]) {
+            end = mid;
+        } else if (numbers[mid] > numbers[end]){
+            start = mid + 1;
+        } else {
+            end--;
+        }
+    }
+    return numbers[start];
+}
+
+// 第一个只出现一次的字符
+char firstUniqChar(string s)  {
+    unordered_map<char, bool> dic;
+    for (char a : s)
+        dic[a] = dic.find(a) == dic.end();
+    for (char c : s)
+        if (dic[c]) return c;
+    return ' ';
+}
+char firstUniqChar(string s) {
+    vector<char> keys;
+    unordered_map<char, bool> dic;
+    for (char c : s) {
+        if (dic.find(c) == dic.end())
+            keys.push_back(c);
+        dic[c] = dic.find(c) == dic.end();
+    }
+    for (char c : keys) {
+        if (dic[c]) return c;
+    }
+    return ' ';
+}
+
+// 在排序数组中查找数字
+int search(vector<int> &nums, int target) {
+    int i = 0, j = nums.size() - 1;
+    while (i <= j) {
+        int mid = (i + j) / 2;
+        if (nums[mid] <= target) i = mid + 1;
+        else j = mid - 1;
+    }
+    int right = i;
+    if (j >= 0 && nums[j] != target) return 0;
+    i = 0, j = nums.size() - 1;
+    while (i <= j) {
+        int mid = (i + j) / 2;
+        if (nums[mid] < target) i = mid + 1;
+        else j = mid - 1;
+    }
+    int left = j;
+    return right - left - 1;
+}
+
+// 0~n-1中缺失的数字
+int missingNumber(vector<int> &nums) {
+    int start = 0, end = nums.size() - 1;
+    while (start <= end) {
+        int mid = (start + end) / 2;
+        if (nums[mid] > mid) end = mid - 1;
+        else start = mid + 1;
+    }
+    return start+1;
+}
+
+// 删除链表的节点
+ListNode* deleteNode(ListNode* head, int val) {
+    ListNode* res = new ListNode(-1);
+    res->next = head;
+    ListNode* node = res;
+    while (head != NULL) {
+        if (head->val == val) {
+            node->next = head->next;
+        }
+        node = node->next;
+        head = head->next;
+    }
+    return res->next;
+}
+
+// 调整数组顺序是奇数位于偶数前面
+vector<int> exchange(vector<int> &nums) {
+    int start = 0, end = nums.size() - 1;
+    while (start < end) {
+        while (nums[start] % 2 != 0) start++;
+        while (nums[end] %2 == 0) end--;
+        swap(nums[start], nums[end]);
+    }
+    return nums;
+}
+
+// 和为s的两个数字
+vector<int> twoSum(vector<int>& nums, int target) {
+    int start = 0, end = nums.size() - 1;
+    vector<int> res;
+    while (start < end) {
+        if (nums[start] + nums[end] == target) {
+            res.push_back(nums[start]);
+            res.push_back(nums[end]);
+            return res;
+        } else if (nums[start] + nums[end] < target) start++;
+        else end--;
+    }
+    return res;
+}
+
+/**
+ * 字符串分割
+ * @param str 原字符串
+ * @param splitChar 分割字符
+ * @return 分割后的字符串数组
+ */
+vector<string> split(const string &str, const string &splitChar) {
+    vector<string> res;
+    if (str == "")
+        return res;
+    string strs = str + splitChar;
+    size_t pos = strs.find(splitChar);
+
+    while (pos != strs.npos) {
+        string temp = strs.substr(0, pos);
+        if (temp != " " && temp != "")
+            res.push_back(temp);
+        strs = strs.substr(pos+1, strs.size());
+        pos = strs.find(splitChar);
+    }
+    return res;
+}
+// 翻转单词顺序
+string reverseWords(string s) {
+    string res;
+    const string splitChar = " ";
+    vector<string> store = split(s, splitChar);
+    if (store.size() == 0)
+        return "";
+    int len = store.size() - 1;
+    res = store[len--];
+    while(len >=0) {
+        res += " " + store[len--];
+    }
+    return res;
+}
+
+string reverseWords(string s) {
+    stack<string> stk;
+    string res,str;
+    istringstream ss(s);
+    while (ss >> str) stk.push(str), stk.push(" ");
+    if (!stk.empty()) stk.pop();
+    while (!stk.empty()) res += stk.top(), stk.pop();
+    return res;
+}
+
+// 二进制中1的个数
+int hammingWeight(uint32_t n) {
+    int res = 0;
+    while (n > 0) {
+        if (n & 1 == 1) res++;
+        n >>= 1;
+    }
+    return res;
+}
+
+// 不用加减乘除做加法
+int add(int a, int b) {
+    while(b != 0)
+    {
+        int c = (unsigned int)(a & b) << 1;
+        a ^= b;
+        b = c;
+    }
+    return a;
 }
 #endif

@@ -249,6 +249,6 @@ int main() {
     // AlgorithmTest03();
     // testFindKth();
     // cout << isValid("((())])]") << endl;
-    // cout << isNumeric("123.45e+6") << endl;
+    cout << isNumeric("123.45e+6") << endl;
     return 0;
 }

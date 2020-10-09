@@ -3,6 +3,7 @@
 #include <string>
 #include <algorithm>
 #include <math.h>
+#include <stack>
 #include <map>
 using namespace std;
 
@@ -74,7 +75,7 @@ using namespace std;
 //     return 0;
 // }
 
-int main() {
+int inputTest() {
     int n, m;
     cin >> n >> m;
     map<char, int> distance;
@@ -92,5 +93,29 @@ int main() {
         cin >> aId >> bId >> dis;
         
     }
+    return 0;
+}
+
+vector<string> split(const string &str, const string &splitChar) {
+    vector<string> res;
+    if (str == "")
+        return res;
+    string strs = str + splitChar;
+    size_t pos = strs.find(splitChar);
+
+    while (pos != strs.npos) {
+        string temp = strs.substr(0, pos);
+        if (temp != "")
+            res.push_back(temp);
+        strs = strs.substr(pos+1, strs.size());
+        pos = strs.find(splitChar);
+    }
+    return res;
+}
+
+int main() {
+    string input = "  Hello  world  ";
+    string splitChar = " ";
+    split(input, splitChar);
     return 0;
 }

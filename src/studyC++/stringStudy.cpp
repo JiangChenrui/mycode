@@ -159,7 +159,7 @@ void test08() {
     cout << "subStr = " << subStr << endl;
 
     string email = "zhangsan@sina.com";
-    // 从邮件地址中 获取 用户信息
+    // 从邮件地址中 获取用户信息
     int pos = email.find("@");
     string usrName = email.substr(0, pos);
     cout << usrName << endl;

@@ -55,7 +55,8 @@
         "concepts": "cpp",
         "ranges": "cpp",
         "list": "cpp",
-        "set": "cpp"
+        "set": "cpp",
+        "unordered_set": "cpp"
     },
     "code-runner.executorMap": {
         "cpp": "cd $dir && g++ $fileName -o $workspaceRoot/build/$fileNameWithoutExt && $workspaceRoot/build/$fileNameWithoutExt",
