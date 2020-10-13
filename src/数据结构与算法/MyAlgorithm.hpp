@@ -1579,7 +1579,7 @@ int maxProfit(int k, vector<int>& prices) {
     if (k > days/2)
         maxProfit(prices);
     vector<vector<vector<int>>> dp(days, vector<vector<int>>(k+1, vector<int>(2)));
-        for (int i = 0; i < days; ++i)
+    for (int i = 0; i < days; ++i) {
         for (int j = 0; j <= k; ++j) {
             if (i - 1 == -1) {
                 dp[i][j][0] = 0;
@@ -1588,12 +1588,13 @@ int maxProfit(int k, vector<int>& prices) {
             }
             if (j == 0) {
                 dp[i][j][0] = 0;
-                dp[i][j][1] = max(dp[i-1][0][1], dp[i-1][0][0]-prices[i]);
+                dp[i][j][1] = max(dp[i-1][0][1], dp[i-1][0][0] - prices[i]);
                 continue;
             }
             dp[i][j][0] = max(dp[i-1][j][0], dp[i-1][j][1] + prices[i]);
-            dp[i][j][1] = max(dp[i-1][j][1], dp[i-1][j-1][0]-prices[i]);
+            dp[i][j][1] = max(dp[i-1][j][1], dp[i-1][j-1][0] - prices[i]);
         }
+    }
     return dp[days-1][k][0];
 }
 
@@ -1877,5 +1878,354 @@ int add(int a, int b) {
         b = c;
     }
     return a;
+}
+
+// 剪绳子
+int cuttingRope(int n) {
+    if (n <= 3) return n-1;
+    int res;
+    switch(n%3) {
+        case 0:
+            res = pow(3, n / 3);
+            break;
+        case 1:
+            res = pow(3, n / 3 - 1) * 4;
+            break;
+        case 2:
+            res = pow(3, n / 3) * 2;
+            break;
+    }
+    return res;
+}
+
+// 剪绳子2
+int cuttingRope(int n) {
+    if (n <= 3) return n-1;
+    int b = n % 3, p = 1000000007;
+    long rem = 1, x = 3;
+    for (int a = n / 3 - 1; a > 0; a /= 2) {
+        if (a % 2 == 1) rem = (rem * x) % p;
+        x = (x * x) % p;
+    }
+    if (b == 0) return (int)(rem*3%p);
+    if (b == 1) return (int)(rem*4%p);
+    return (int)(rem*6%p);
+}
+
+// 1~n整数中1出现的次数
+int countDigitOne(int n) {
+    long digit = 1;
+    int high = n / 10, cur = n % 10, low = 0, res = 0;
+    while (high != 0 || cur != 0) {
+        if (cur == 0) res += high * digit;
+        else if (cur == 1) res += high * digit + low + 1;
+        else res += (high + 1) * digit;
+        low += cur * digit;
+        cur = high % 10;
+        high /= 10;
+        digit *= 10;
+    }
+    return res;
+}
+
+// 数字序列中某一位的数字
+int findNthDigit(int n) {
+    if (n < 10) return n;
+    int digit = 1;
+    long start = 1;
+    long count = 9;
+    while (n > count) {
+        n -= count;
+        start *= 10;
+        digit += 1;
+        count = digit * start * 9;
+    }
+    long num = start + (n - 1) / digit;
+    return to_string(num)[(n - 1) % digit] - '0';
+}
+
+// 构建乘积数组
+vector<int> constructArr(vector<int>& a) {
+    int len = a.size();
+    if (len == 0) return {};
+    vector<int> res(len, 1);
+    int temp = 1;
+    for (int i = 1; i < len; ++i) {
+        res[i] = res[i-1] * a[i-1];
+    }
+    for (int i = len - 2; i >=0; i--) {
+        temp *= a[i+1];
+        res[i] *= temp;
+    }
+    return res;
+}
+
+// 顺时针打印矩阵
+vector<int> spiralOrder(vector<vector<int>>& matrix) {
+    if (matrix.empty()) return {};
+    vector<int> res;
+    int left = 0, right = matrix[0].size()-1, top = 0, down = matrix.size()-1;
+    while (true) {
+        for (int i = left; i <= right; ++i) {
+            res.push_back(matrix[top][i]);
+        }
+        if (++top > down) break;
+        for (int i = top; i <= down; ++i) {
+            res.push_back(matrix[i][right]);
+        }
+        if (--right < left) break;
+        for (int i = right; i >= left; --i) {
+            res.push_back(matrix[down][i]);
+        }
+        if (--down < top) break;
+        for (int i = down; i >= top; --i) {
+            res.push_back(matrix[i][left]);
+        }
+        if (++left > right) break;
+    }
+    return res;
+}
+
+// 栈的压入、弹出序列
+bool validateStackSequences(vector<int>& pushed, vector<int>& popped) {
+    stack<int> stk;
+    int i = 0;
+    for (int num : pushed) {
+        stk.push(num);
+        while (!stk.empty() && stk.top() == popped[i]) {
+            stk.pop();
+            i++;
+        }
+    }
+    return stk.empty();
+}
+
+// 二叉树的最小深度
+int minDepth(TreeNode* root) {
+    queue<TreeNode*> nodes;
+    int depth = 1;
+    if (root == NULL) return 0;
+    nodes.push(root);
+    while (!nodes.empty()) {
+        int size = nodes.size();
+        for (int i = 0; i < size; ++i) {
+            if (nodes.front()->left == NULL && nodes.front()->right == NULL) return depth;
+            if (nodes.front()->left != NULL) nodes.push(nodes.front()->left);
+            if (nodes.front()->right != NULL) nodes.push(nodes.front()->right);
+            nodes.pop();
+        }
+        depth++;
+    }
+    return depth;
+}
+
+// 打开转盘锁
+string plusUp(string str, int i) {
+    string s = str;
+    if (s[i] == '9') s[i] = '0';
+    else s[i] += 1;
+    return s;
+}
+string plusDown(string str, int i) {
+    string s = str;
+    if (s[i] == '0') s[i] = '9';
+    else s[i] -= 1;
+    return s;
+}
+
+int openLock(vector<string>& deadends, string target) {
+    queue<string> q;
+    // 记录死亡密码
+    unordered_set<string> deads;
+    deads.insert(deadends.begin(), deadends.end());
+    // 记录已经穷举过的密码
+    unordered_set<string> visited;
+    q.push("0000");
+    visited.insert("0000");
+    int step = 0;
+    while (!q.empty()) {
+        int size = q.size();
+        for (int i = 0; i < size; ++i) {
+            string temp = q.front();
+            q.pop();
+            if (deads.find(temp) != deads.end()) continue;
+            if (temp == target) return step;
+            // 遍历相邻节点
+            for (int j = 0; j < 4; ++j) {
+                string up = plusUp(temp, j);
+                if (visited.find(up) == visited.end()) {
+                    q.push(up);
+                    visited.insert(up);
+                }
+                string down = plusDown(temp, j);
+                if (visited.find(down) == visited.end()) {
+                    q.push(down);
+                    visited.insert(down);
+                }
+            }
+        }
+        step++;
+    }
+    return -1;
+}
+
+// 在排序数组中查找元素的第一个和最后一个位置
+vector<int> searchRange(vector<int>& nums, int target) {
+    vector<int> res;
+    int left = 0, right = nums.size() - 1;
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        if (nums[mid] >= target) right = mid - 1;
+        else left = mid + 1;  
+    }
+    if (left >= nums.size() || nums[left] != target) res.push_back(-1);
+    else res.push_back(left);
+
+    right = nums.size() - 1;
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        if (nums[mid] <= target) left = mid + 1;
+        else right = mid - 1;
+    }
+    if (right < 0 || nums[right] != target) res.push_back(-1);
+    else res.push_back(right);
+    return res;
+}
+
+vector<int> searchRange(vector<int> &nums, int target) {
+    vector<int> res = {-1, -1};
+    int left = 0, right = nums.size() - 1;
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        if (nums[mid] == target) {
+            int temp = mid;
+            while (temp >= left && nums[temp] == target)
+                temp--;
+            res[0] = temp + 1;
+            temp = mid;
+            while (temp <= right && nums[temp] == target)
+                temp++;
+            res[1] = temp - 1;
+            break;
+        } else if (nums[mid] > target) {
+            right = mid - 1;
+        } else if (nums[mid] < target) {
+            left = mid + 1;
+        }
+    }
+    return res;
+}
+
+// 最小子串覆盖
+string minWindow(string s, string t) {
+    unordered_map<char, int> need, window;
+    for (char c : t) need[c]++;
+    int left = 0, right = 0;
+    int valid = 0;
+    // 记录最小覆盖子串的起始索引及长度
+    int start = 0, len = INT32_MAX;
+    while (right < s.size()) {
+        char c = s[right];
+        right++;
+        if (need.count(c)) {
+            window[c]++;
+            if (window[c] == need[c])
+                valid++;
+        }
+
+        while (valid == need.size()) {
+            if (right - left < len) {
+                start = left;
+                len = right - left;
+            }
+            char d = s[left];
+            left++;
+            if (need.count(d)) {
+                if (window[d] == need[d])
+                    valid--;
+                window[d]--;
+            }
+        }
+    }
+    return len == INT32_MAX ? "" : s.substr(start, len);
+}
+
+// 字符串的排列
+bool checkInclusion(string s1, string s2) {
+    unordered_map<char, int> need, window;
+    for (char a : s1) need[a]++;
+
+    int left = 0, right = 0;
+    int valid = 0;
+    while (right < s2.size()) {
+        char c = s2[right];
+        right++;
+        if (need.count(c)) {
+            window[c]++;
+            if (window[c] == need[c])
+                valid++;
+        }
+
+        while (right - left >= s1.size()) {
+            if (valid == need.size()) return true;
+            char d = s2[left];
+            left++;
+            if (need.count(d)) {
+                if (window[d] == need[d]) valid--;
+                window[d]--;
+            }
+        }
+    }
+    return false;
+}
+
+// 找到字符串中所有字母异位词
+vector<int> findAnagrams(string s, string p) {
+    unordered_map<char, int> need, window;
+    for (char a : p) need[a]++;
+    vector<int> res;
+    
+    int left = 0, right = 0;
+    int valid = 0;
+    while (right < s.size()) {
+        char c = s[right];
+        right++;
+        if (need.count(c)) {
+            window[c]++;
+            if (window[c] == need[c])
+                valid++;
+        }
+
+        while (right - left >= p.size()) {
+            if (valid == need.size()) res.push_back(left);
+            char d = s[left];
+            left++;
+            if (need.count(d)) {
+                if (window[d] == need[d]) valid--;
+                window[d]--;
+            }
+        }
+    }
+    return res;
+}
+
+// 无重复字符的最长子串
+int lengthOfLongestSubstring(string s) {
+    unordered_map<char, int> window;
+    int res = 0;
+    int left = 0, right = 0;
+    while (right < s.size()) {
+        char c = s[right];
+        right++;
+        window[c]++;
+        
+        while (window[c] > 1) {
+            char d = s[left];
+            left++;
+            window[d]--;
+        }
+        res = max(res, right - left);
+    }
+    return res;
 }
 #endif
