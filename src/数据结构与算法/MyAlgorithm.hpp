@@ -2228,4 +2228,132 @@ int lengthOfLongestSubstring(string s) {
     }
     return res;
 }
+
+// 打家劫舍
+unordered_map<TreeNode*, int> memo;
+int rob(TreeNode* root) {
+    if (root == NULL) return 0;
+    if (memo.find(root) != memo.end()) return memo[root];
+    int do_it = root->val + (root->left == NULL ? 0 : rob(root->left->left)+rob(root->left->right))
+                    + (root->right == NULL ? 0 : rob(root->right->left) + rob(root->right->right));
+    int not_do = rob(root->left) + rob(root->right);
+    int res = max(do_it, not_do);
+    memo[root] = res;
+    return res;
+}
+
+vector<int> twoSum(vector<int>& nums, int target) {
+    int n = nums.size();
+    if (n < 2) return {};
+    unordered_map<int, int> hashMap;
+    for (int i = 0; i < n; ++i) hashMap[nums[i]] = i;
+    for (int i = 0; i < n; ++i) {
+        int sub = target - nums[i];
+        if (hashMap.find(sub) != hashMap.end() && hashMap[sub] != i)
+            return {i, hashMap[sub]};
+    }
+    return {-1, -1};
+}
+
+// 三数之和
+class ThreeSum {
+public:
+    vector<vector<int>> threeSum(vector<int>& nums) {
+        int n = nums.size();
+        if (n < 3) return {};
+        sort(nums.begin(), nums.end());
+        vector<vector<int>> res;
+        for (int i = 0; i < n - 2; ++i) {
+            vector<vector<int>> temp = twoSum(nums, i+1, 0 - nums[i]);
+            for (vector<int>& a : temp) {
+                a.insert(a.begin(), nums[i]);
+                res.push_back(a);
+            }
+            while (i < n - 2 && nums[i] == nums[i+1]) i++;
+        }
+        return res;
+    }
+private:
+    vector<vector<int>> twoSum(vector<int>& nums, int start, int target) {
+        int low = start, high = nums.size() - 1;
+        vector<vector<int>> res;
+        while (low < high) {
+            int sum = nums[low] + nums[high];
+            int left = nums[low], right = nums[high];
+            if (sum < target) {
+                while (low < high && nums[low] == left) low++;
+            } else if (sum > target) {
+                while (low < high && nums[high] == right) high--;
+            } else {
+                res.push_back({left, right});
+                while (low < high && nums[low] == left) low++;
+                while (low < high && nums[high] == right) high--;
+            }
+        }
+        return res;
+    }
+};
+
+vector<vector<int>> nSumTarget(vector<int>& nums, int n, int start, int target) {
+    int size = nums.size();
+    vector<vector<int>> res;
+    if (n < 2 || size < n) return res;
+    if (n == 2) {
+        int low = start, high = size - 1;
+        while (low < high) {
+            int left = nums[low], right = nums[high];
+            int sum = left + right;
+            if (sum < target) {
+                while (low < high && nums[low] == left) low++;
+            } else if (sum > target) {
+                while (low < high && nums[high] == right) high--;
+            } else {
+                res.push_back({left, right});
+                while (low < high && nums[low] == left) low++;
+                while (low < high && nums[high] == right) high--;
+            }
+        }
+    } else {
+        for (int i = start; i < size; ++i) {
+            vector<vector<int>> sub = nSumTarget(nums, n-1, i+1, target-nums[i]);
+            for (vector<int>& arr : sub) {
+                arr.insert(arr.begin(), nums[i]);
+                res.push_back(arr);
+            }
+            while (i < size && nums[i] == nums[i+1]) i++;
+        }
+    }
+    return res;
+}
+// 四数之和
+vector<vector<int>> fourSum(vector<int>& nums, int target) {
+    sort(nums.begin(), nums.end());
+    return nSumTarget(nums, 4, 0, 0);
+}
+
+bool arrSort(vector<int>& a, vector<int>& b) {
+    if (a.size() < 2 || b.size() < 2) return false;
+    if (a[0] < b[0]) return true;
+    else if (a[0] == b[0]) return a[1] > b[1];
+    else return false;
+}
+// 删除被覆盖区间
+int removeCoveredIntervals(vector<vector<int>>& intervals) {
+    if (intervals.empty()) return -1;
+    sort(intervals.begin(), intervals.end(), arrSort);
+    int res = 0;
+    int left = intervals[0][0];
+    int right = intervals[0][1];
+    for (int i = 1; i < intervals.size(); ++i) {
+        if (intervals[i][0] > right) {
+            left = intervals[i][0];
+            right = intervals[i][1];
+        } else if (intervals[i][1] > right) {
+            right = intervals[i][1];
+        } else {
+            res++;
+        }
+    }
+    return res;
+}
 #endif

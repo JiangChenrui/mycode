@@ -156,7 +156,7 @@ public:
     int m_age;
 };
 
-class comparePerson {
+class compareRecord {
 public:
     bool operator() (const Person &p1, const Person &p2) {
         return p1.m_age > p2.m_age;
@@ -165,7 +165,7 @@ public:
 
 void test08() {
     // 自定义数据类型都会指定排序规则
-    set<Person, comparePerson> s;
+    set<Person, compareRecord> s;
 
     Person p1("刘备", 24);
     Person p2("关羽", 28);
@@ -176,7 +176,7 @@ void test08() {
     s.insert(p3);
     s.insert(p4);
 
-    for (set<Person, comparePerson>::iterator it = s.begin(); it != s.end(); ++it)
+    for (set<Person, compareRecord>::iterator it = s.begin(); it != s.end(); ++it)
         cout << "姓名：" << it->m_name << "\t年龄：" << it->m_age << endl;
 }
 

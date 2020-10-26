@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <math.h>
 #include <stack>
+#include "MySort.hpp"
 #include <map>
 using namespace std;
 
@@ -117,5 +118,14 @@ int main() {
     string input = "  Hello  world  ";
     string splitChar = " ";
     split(input, splitChar);
+
+    vector<int> arr(100000, 1);
+    for (int i = 1; i < arr.size(); ++i) {
+        arr[i] = arr[i] + arr[i-1];
+    }
+    random_shuffle(arr.begin(), arr.end());
+    MergeSort* MergeS = new MergeSort(arr);
+    printArray(arr);
+    cout << endl;
     return 0;
 }

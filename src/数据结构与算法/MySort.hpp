@@ -2,6 +2,7 @@
 #define MySORT_HPP
 #include <iostream>
 #include <stack>
+#include <vector>
 using namespace std;
 // 查找和排序方法
 typedef struct student {   
@@ -80,6 +81,13 @@ template <typename T>
 void printArray(T arr[], int n) {
     for (int i = 0; i < n - 1; ++i) {
         cout << arr[i] << ' ';
+    }
+    cout << endl;
+}
+
+void printArray(vector<int> arr) {
+    for (int a : arr) {
+        cout << a << ' ';
     }
     cout << endl;
 }
@@ -277,6 +285,47 @@ void headSort(int arr[], int n) {
         adjust(arr, 0, j);
     }
 }
+
+/**
+ * 归并排序
+ * @param arr 数组
+ * @param n 数组元素个数
+ */
+class MergeSort {
+public:
+    MergeSort(vector<int>& arr) {
+        sort(arr, 0, arr.size()-1);
+    }
+    ~MergeSort();
+private:
+    void merge(vector<int>& arr, int start, int mid, int end) {
+        vector<int> left(arr.begin()+start, arr.begin()+mid+1);
+        vector<int> right(arr.begin()+mid+1, arr.begin()+end+1);
+        int cur = start;
+        for (int i = 0, j = 0; i < left.size(), j < right.size();) {
+            if (left[i] < right[j]) {
+                arr[cur++] = left[i++];
+            } else {
+                arr[cur++] = right[j++];
+            }
+            if (i == left.size()) {
+                for (j; j < right.size();++j) arr[cur++] = right[j];
+                break;
+            }
+            if (j == right.size()) {
+                for (i; i < left.size();++i) arr[cur++] = left[i];
+                break;
+            }
+        }
+    }
+    void sort(vector<int>& arr, int start, int end) {
+        if (start >= end) return;
+        int mid = start + (end - start) / 2;
+        sort(arr, start, mid);
+        sort(arr, mid+1, end);
+        merge(arr, start, mid, end);
+    }
+};
 
 bool isPrime(int num) {
     if (num < 0) 

@@ -14,10 +14,9 @@ void test01() {
     ofstream ofs;
 
     ofs.open("test.txt", ios::out);
-    ofs << "姓名：张三" << endl;
-    ofs << "性别：男" << endl;
-    ofs << "年龄：18" << endl;
-
+    for (int i = 0; i < 10000; ++i) {
+        ofs << rand() % 10000 << '\t' << "男\t" << 12 << "\t" << rand() % (6) + 18 << endl;
+    }
     ofs.close();
 }
 
@@ -92,6 +91,6 @@ void test04() {
 }
 
 int main() {
-    test04();
+    test01();
     return 0;
 }
