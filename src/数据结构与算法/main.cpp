@@ -5,7 +5,6 @@
 #include "MyQueue.hpp"
 #include "MyTree.hpp"
 #include "MySort.hpp"
-#include "MyAlgorithm.hpp"
 
 using namespace std;
 
@@ -216,25 +215,6 @@ void SortTest03() {
     printArray(arr, N);
 }
 
-void AlgorithmTest01() {
-    // cout << P(6, 6) << endl;
-    int Q[4][4], count;
-    for (int i = 0; i < 4; i++)
-        for (int j = 0; j < 4; j++)
-            Q[i][j] = 0;
-    Queen(0, Q, count);
-    cout << count << endl;
-}
-
-void AlgorithmTest02() {
-    cout << UpStairs(20) << endl;
-    cout << UpStairs2(20) << endl;
-}
-
-void AlgorithmTest03() {
-    cout << miniDistance("horse", "ros") << endl;
-}
-
 int main() {
     // test01();
     // test02();
@@ -249,6 +229,5 @@ int main() {
     // AlgorithmTest03();
     // testFindKth();
     // cout << isValid("((())])]") << endl;
-    cout << isNumeric("123.45e+6") << endl;
     return 0;
 }

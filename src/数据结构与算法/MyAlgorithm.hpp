@@ -11,8 +11,23 @@
 #include <unordered_map>
 #include <set>
 #include <sstream>
+#include <stack>
 using namespace std;
 
+class Node {
+public:
+    int val;
+    Node* left;
+    Node* right;
+    Node* next;
+
+    Node() : val(0), left(NULL), right(NULL), next(NULL) {}
+
+    Node(int _val) : val(_val), left(NULL), right(NULL), next(NULL) {}
+
+    Node(int _val, Node* _left, Node* _right, Node* _next) :
+        val(_val), left(_left), right(_right), next(_next) {}
+};
 /**
  * 计算整数的划分数
  */
@@ -1336,27 +1351,6 @@ vector<vector<int>> pathSum(TreeNode* root, int sum) {
     return res;
 }
 
-class Node {
-public:
-    int val;
-    Node* left;
-    Node* right;
-
-    Node() {}
-
-    Node(int _val) {
-        val = _val;
-        left = NULL;
-        right = NULL;
-    }
-
-    Node(int _val, Node* _left, Node* _right) {
-        val = _val;
-        left = _left;
-        right = _right;
-    }
-};
-
 // 二叉搜索树与双向链表
 class treeToDouble {
 public:
@@ -2356,4 +2350,143 @@ int removeCoveredIntervals(vector<vector<int>>& intervals) {
     }
     return res;
 }
+
+// 区间列表的交集
+vector<vector<int>> intervalIntersection(vector<vector<int>>& A, vector<vector<int>>& B) {
+    vector<vector<int>> res;
+    if (A.empty() || B.empty()) return res;
+    int i = 0, j = 0;
+    while (i < A.size() && j < B.size()) {
+        if (A[i][0] <= B[j][1] && A[i][1] >= B[j][0]) {
+            res.push_back({max(A[i][0], B[j][0]), min(A[i][1], B[j][1])});
+        }
+        if (A[i][1] < B[j][1]) i++;
+        else j++;
+    }
+    return res;
+}
+
+// 鸡蛋掉落
+class SuperEggDrop {
+private:
+    unordered_map<pair<int, int>, int> memo;
+    int dp(int K, int N) {
+        if (K == 1) return N;
+        if (N == 0) return 0;
+        if (memo.find({K, N}) != memo.end()) return memo[{K, N}];
+        int res = INT16_MAX;
+        for (int i = 0; i <= N; ++i) {
+            res = min(res, max(dp(K, N-i), dp(K-1, i-1))) + 1;
+        }
+        memo[{K, N}] = res;
+        return res;
+    }
+public:
+    int superEggDrop(int K, int N) {
+        return dp(K, N);
+    }
+};
+
+// 填充每个节点的下一个右侧节点指针
+Node* connect(Node* root) {
+    if (root == NULL) return root;
+    queue<Node*> nodes;
+    nodes.push(root);
+    while (!nodes.empty()) {
+        int sz = nodes.size();
+        Node* temp;
+        for (int i = 0; i < sz; ++i) {
+            if (i == 0) {
+                temp = nodes.front();
+            } else {
+                temp->next = nodes.front();
+                temp = nodes.front();
+            }
+            nodes.pop();
+            if (temp->left != NULL) nodes.push(temp->left);
+            if (temp->right != NULL) nodes.push(temp->right);
+        }
+    }
+    return root;
+}
+
+// 二叉树展开为链表
+void flatten(TreeNode* root) {
+    if (root == NULL) return;
+    
+    flatten(root->left);
+    flatten(root->right);
+
+    TreeNode* left = root->left;
+    TreeNode* right = root->right;
+
+    root->left = NULL;
+    root->right = left;
+
+    TreeNode* p = root;
+    while (p->right != NULL) {
+        p = p->right;
+    }
+    p->right = right;
+}
+
+// 最大二叉树
+TreeNode* constructMaximumBinaryTree(vector<int>& nums, int start, int end) {
+    if (start == end) return NULL;
+    int index = start;
+    for (int i = start + 1; i < end; ++i) {
+        if (nums[i] > nums[index]) index = i;
+    }
+    TreeNode* root = new TreeNode(nums[index]);
+    root->left = constructMaximumBinaryTree(nums, start, index);
+    root->right = constructMaximumBinaryTree(nums, index+1, end);
+    return root;
+}
+TreeNode* constructMaximumBinaryTree(vector<int>& nums) {
+    return constructMaximumBinaryTree(nums, 0, nums.size());
+}
+
+// 从前序和中序遍历序列构造二叉树
+TreeNode* buildTree(vector<int>& preorder, int preStart, int preEnd,
+                    vector<int>& inorder, int inStart, int inEnd) {
+    if (preStart >= preEnd) return NULL;
+    TreeNode* root = new TreeNode(preorder[preStart]);
+    int index = inStart;
+    for (int i = inStart; i < inEnd; ++i) {
+        if (inorder[i] == root->val) {
+            index = i;
+            break;
+        }
+    }
+    int len = index - inStart;
+    root->left = buildTree(preorder, preStart+1, preStart+len+1, inorder, inStart, index);
+    root->right = buildTree(preorder, preStart+len+1, preEnd, inorder, index+1, inEnd);
+    return root;
+}
+TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+    return buildTree(preorder, 0, preorder.size(), inorder, 0, inorder.size());
+}
+
+// 从中序和后序遍历序列构造二叉树
+TreeNode* buildTree(vector<int>& inorder, int inStart, int inEnd,
+                    vector<int>& postorder, int postStart, int postEnd) {
+    if (inStart >= inEnd) return NULL;
+    TreeNode* root = new TreeNode(postorder[postEnd-1]);
+    int index = inStart;
+    for (int i = inStart; i < inEnd; ++i) {
+        if (inorder[i] == root->val) {
+            index = i;
+            break;
+        }
+    }
+    int len = index - inStart;
+    root->left = buildTree(inorder, inStart, index, postorder, postStart, postStart+len);
+    root->right = buildTree(inorder, index+1, inEnd, postorder, postStart+len, postEnd-1);
+    return root;
+} 
+TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
+    return buildTree(inorder, 0, inorder.size(), postorder, 0, postorder.size());
+}
+
+
 #endif
