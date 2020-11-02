@@ -160,6 +160,19 @@ void shellSort(int arr[], int n) {
     }
 }
 
+void shellSort(int arr[], int n) {
+    int h = 1;
+    while (h < n / 3) h = h * 3 + 1;
+    while (h >= 1) {
+        for (int i = h; i < n; ++i) {
+            for (int j = i; j >= h && arr[j] < arr[j-h]; j -= h) {
+                swap(arr[j], arr[j-h]);
+            }
+        }
+        h /= 3;
+    }
+}
+
 void swap(int &a, int &b) {
     int temp = a;
     a = b;

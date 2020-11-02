@@ -2488,5 +2488,83 @@ TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
     return buildTree(inorder, 0, inorder.size(), postorder, 0, postorder.size());
 }
 
+// 找到所有数组中消失的数字
+vector<int> findDisappearedNumbers(vector<int>& nums) {
+    vector<int> res;
+    if (nums.empty()) return res;
+    for (int i = 0; i < nums.size(); ++i) {
+        int index = (nums[i] - 1) % nums.size();
+        nums[index] += nums.size();
+    }
+    for (int i = 0; i < nums.size(); ++i) {
+        if (nums[i] <= nums.size()) res.push_back(i+1);
+    }
+    return res;
+}
+
+/**
+ * 0-1背包问题
+ * @param W 背包重量
+ * @param N 背包能装物品
+ * @param wt 物品重量
+ * @param val 物品价值 
+ */
+int knapsack(int W, int N, vector<int>& wt, vector<int>& val) {
+    vector<vector<int>> dp(N+1, vector<int>(W + 1, 0));
+    for (int i = 1; i <= N; i++) {
+        for (int w = 1; w <= W; w++) {
+            if (w - wt[i-1] < 0) dp[i][w] = dp[i-1][w];
+            else dp[i][w] = max(dp[i-1][w-wt[i-1]]+val[i-1],
+                                dp[i-1][w]);
+        }
+    }
+    return dp[N][W];
+}
+
+// 分割等和子集
+bool canPartition(vector<int>& nums) {
+    int sum = 0;
+    for (int it:nums) sum += it;
+    if (sum % 2 != 0) return false;
+    sum = sum / 2;
+    int n = nums.size();
+    vector<vector<bool>> dp(n+1, vector<bool>(sum+1, false));
+    for (int i = 0; i <= n; ++i) dp[i][0] = true;
+    for (int i = 1; i <= n; ++i) {
+        for (int j = 1; j <= sum; ++j) {
+            if (j - nums[i-1] < 0) dp[i][j] = dp[i-1][j];
+            else dp[i][j] = dp[i-1][j] || dp[i-1][j-nums[i-1]];
+        }
+    }
+    return dp[n][sum];
+}
+
+bool canPartition(vector<int>& nums) {
+    int sum = 0;
+    for (int num : nums) sum += num;
+    if (sum % 2 != 0) return false;
+    sum = sum / 2;
+    int n = nums.size();
+    vector<bool> dp(sum+1, false);
+    dp[0] = true;
+    for (int i = 0; i < n; ++i) {
+        for (int j = sum; j >= 0; j--) {
+            if (j-nums[i] >= 0) dp[j] = dp[j] || dp[j-nums[i]];
+        }
+    }
+    return dp[sum];
+}
+
+// 零钱兑换2
+int change(int amount, vector<int>& coins) {
+    vector<int> dp(amount+1, 0);
+    dp[0] = 1;
+    for (int i = 0; i < coins.size(); ++i) {
+        for (int j = 1; j <= amount; ++j) {
+            if (j - coins[i] >= 0) dp[j] = dp[j] + dp[j - coins[i]];
+        }
+    }
+    return dp[amount];
+}
 
 #endif
